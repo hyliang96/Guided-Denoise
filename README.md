@@ -36,7 +36,11 @@ The winning submission for NIPS 2017: Defense Against Adversarial Attack of team
 
 ### Preprocess dataset
 
-Run `prepare_data.ipynb` with jupyter notebook, to convert raw dataset (like ImageNet, TinyImageNet) `Ogirinset` and `Originset_test`, which are used to run attackers and train denoiser. 
+```bash
+mkdir Ogirinset Originset_test # used to save images that prepare_data.ipynb will use 
+```
+
+Run `prepare_data.ipynb` with jupyter notebook, to convert ImageNet into `Ogirinset`, `Originset_test`
 
 ### Run Attackers
 
@@ -50,6 +54,10 @@ To generate the attacking samples which will be used to train and test denoiser
   - `--models=all`: all attacks in `Attackset/`
 
 - run attacker
+
+  ```bash
+  mkdir Advset
+  ```
 
   ```bash
   bash toolkit/run_attacks.sh <gpuids> [other args]

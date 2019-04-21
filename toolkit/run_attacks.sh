@@ -29,7 +29,7 @@ python "${SCRIPT_DIR}/run_attacks.py" \
   --output_dir="${WORKING_DIR}/output_dir${SETID}" \
   --epsilon="${MAX_EPSILON}" \
   --save_all_classification \
-  --models=all \
+  --models=fgsm_ensv3_random \
   --gpu \
   --use_existing 0 \
   --gpuid="${GPUID}" \
