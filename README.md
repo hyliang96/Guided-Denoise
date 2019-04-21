@@ -6,6 +6,10 @@ The winning submission for NIPS 2017: Defense Against Adversarial Attack of team
 
 [Defense against Adversarial Attacks Using High-Level Representation Guided Denoiser](https://arxiv.org/abs/1712.02976)
 
+# Our Experiment environment
+
+tensorflow-gpu=1.9.0
+
 # File Description
 
 ### dataset
@@ -46,6 +50,10 @@ Run `prepare_data.ipynb` with jupyter notebook, to convert ImageNet into `Ogirin
 
 To generate the attacking samples which will be used to train and test denoiser
 
+```bash
+mkdir Advset # used to save attacking samples
+```
+
 #### Generate training exsamples
 
 - modifying arguments in `toolkit/run_attacks.sh`:
@@ -56,14 +64,10 @@ To generate the attacking samples which will be used to train and test denoiser
 - run attacker
 
   ```bash
-  mkdir Advset
-  ```
-
-  ```bash
   bash toolkit/run_attacks.sh <gpuids> [other args]
   ```
 
-  - `<gpuids>`: gpuids to run attack, numbers separated by comma. 
+  - `<gpuids>`: gpuids to run attack, numbers separated by comma. This step only consumes one GPU.
 
 #### Generate testing exsamples
 
