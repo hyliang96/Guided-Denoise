@@ -115,7 +115,7 @@ def load_images(input_dir, batch_shape):
 
 def save_images(arg):
     image,filename,output_dir = arg
-    imsave(os.path.join(output_dir, filename), (image + 1.0) * 0.5, format='png')
+    imsave(os.path.join(output_dir, filename.decode('utf-8')), (image + 1.0) * 0.5, format='png')
 
 def graph(x, y, i, x_max, x_min, grad, eps_inside):
   num_iter = FLAGS.num_iter
@@ -133,8 +133,8 @@ def graph(x, y, i, x_max, x_min, grad, eps_inside):
   y = first_round * pred + (1 - first_round) * y
   one_hot = tf.one_hot(y, num_classes)
 
-  logits = logits_v3 
-  auxlogits = end_points_v3['AuxLogits'] 
+  logits = logits_v3
+  auxlogits = end_points_v3['AuxLogits']
   cross_entropy = tf.losses.softmax_cross_entropy(one_hot,
                                                   logits,
                                                   label_smoothing=0.0,
@@ -198,7 +198,7 @@ def main(_):
     images = tf.cast(images,tf.float32)/255.0*2.-1.
     images_splits = tf.split(axis=0, num_or_size_splits=n_gpus, value=images)
     eps_splits = tf.split(axis=0, num_or_size_splits=n_gpus, value=eps)
- 
+
 
     # Prepare graph
     #x_input = tf.placeholder(tf.float32, shape=batch_shape)
@@ -223,7 +223,7 @@ def main(_):
     x_adv = tf.concat(x_advlist,0)
     # Run computation
     s1 = tf.train.Saver(slim.get_model_variables(scope='Ens3AdvInceptionV3'))
-    init = (tf.global_variables_initializer(), tf.local_variables_initializer())  
+    init = (tf.global_variables_initializer(), tf.local_variables_initializer())
 
     with tf.Session() as sess:
       sess.run(init)
@@ -243,10 +243,10 @@ def main(_):
           names = [os.path.basename(name) for name in names]
           stack_img.append(adv_images)
           stack_names.append(names)
-          # save_images2(adv_images, names, FLAGS.output_dir, pool) 
+          # save_images2(adv_images, names, FLAGS.output_dir, pool)
           # save_images(adv_images, names, FLAGS.output_dir)
           if ((i+1)%100 ==0) or i == n_iter-1:
-            print("%d / %d"%(i+1,n_iter)) 
+            print("%d / %d"%(i+1,n_iter))
             stack_img = np.concatenate(stack_img)
             stack_names = np.concatenate(stack_names)
             #partial_save = partial(save_one,images=stack_img,filenames=stack_names,output_dir=FLAGS.output_dir)
@@ -256,7 +256,7 @@ def main(_):
             stack_names = []
 
 
-  #    save_images(adv_images, filenames, FLAGS.output_dir)
+      # save_images(adv_images, filenames, FLAGS.output_dir)
       # Finish off the filename queue coordinator.
       coord.request_stop()
       coord.join(threads)

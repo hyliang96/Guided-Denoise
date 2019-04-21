@@ -10,6 +10,8 @@ The winning submission for NIPS 2017: Defense Against Adversarial Attack of team
 
 tensorflow-gpu=1.9.0
 
+4 x GeForce GTX TITAN X
+
 # File Description
 
 ### dataset
@@ -52,6 +54,14 @@ To generate the attacking samples which will be used to train and test denoiser
 
 ```bash
 mkdir Advset # used to save attacking samples
+```
+
+
+
+```python
+def save_images(arg):
+    image,filename,output_dir = arg
+    imsave(os.path.join(output_dir, filename.decode('utf-8')), (image + 1.0) * 0.5, format='png')
 ```
 
 #### Generate training exsamples

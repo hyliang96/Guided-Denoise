@@ -115,7 +115,7 @@ def load_images(input_dir, batch_shape):
 
 def save_images(arg):
     image,filename,output_dir = arg
-    imsave(os.path.join(output_dir, filename), (image + 1.0) * 0.5, format='png')
+    imsave(os.path.join(output_dir, filename.decode('utf-8')), (image + 1.0) * 0.5, format='png')
 
 def graph(x, y, i, x_max, x_min, grad, eps_inside):
   num_iter = FLAGS.num_iter
@@ -126,7 +126,7 @@ def graph(x, y, i, x_max, x_min, grad, eps_inside):
   with slim.arg_scope(resnet_v2.resnet_arg_scope()):
     logits_resnet, end_points_resnet = resnet_v2.resnet_v2_50(
         x, num_classes=num_classes, is_training=False)
-            
+
   pred = tf.argmax(end_points_resnet['predictions'], 1)
 
   first_round = tf.cast(tf.equal(i, 0), tf.int64)
@@ -193,7 +193,7 @@ def main(_):
     images = tf.cast(images,tf.float32)/255.0*2.-1.
     images_splits = tf.split(axis=0, num_or_size_splits=n_gpus, value=images)
     eps_splits = tf.split(axis=0, num_or_size_splits=n_gpus, value=eps)
- 
+
 
     # Prepare graph
     #x_input = tf.placeholder(tf.float32, shape=batch_shape)
@@ -218,7 +218,7 @@ def main(_):
     x_adv = tf.concat(x_advlist,0)
     # Run computation
     s8 = tf.train.Saver(slim.get_model_variables(scope='resnet_v2'))
-    init = (tf.global_variables_initializer(), tf.local_variables_initializer())  
+    init = (tf.global_variables_initializer(), tf.local_variables_initializer())
 
     with tf.Session() as sess:
       sess.run(init)
@@ -238,10 +238,10 @@ def main(_):
           names = [os.path.basename(name) for name in names]
           stack_img.append(adv_images)
           stack_names.append(names)
-          # save_images2(adv_images, names, FLAGS.output_dir, pool) 
+          # save_images2(adv_images, names, FLAGS.output_dir, pool)
           # save_images(adv_images, names, FLAGS.output_dir)
           if ((i+1)%100 ==0) or i == n_iter-1:
-            print("%d / %d"%(i+1,n_iter)) 
+            print("%d / %d"%(i+1,n_iter))
             stack_img = np.concatenate(stack_img)
             stack_names = np.concatenate(stack_names)
             #partial_save = partial(save_one,images=stack_img,filenames=stack_names,output_dir=FLAGS.output_dir)
