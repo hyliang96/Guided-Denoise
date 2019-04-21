@@ -10,9 +10,11 @@ The winning submission for NIPS 2017: Defense Against Adversarial Attack of team
 
 tensorflow-gpu=1.9.0
 
-4 x GeForce GTX TITAN X
+GeForce GTX TITAN X
 
 # File Description
+
+The files and dirs directly under this repo folder are the following:
 
 ### dataset
 
@@ -38,9 +40,27 @@ tensorflow-gpu=1.9.0
 - GD_train: train the defense model using guided denoise
 - PD_train: train the defense model using pixel denoise
 
+# Dataset
+
+You need to download ImageNet before preprocessing dataset , and 
+
+* please make the ImageNet training images in 1000 folders, a folder for each class, like:
+
+  `Path_to_ImageNet_train/n04485082/n04485082_1000.JPEG`
+
+* please make the ImageNet validating images in one folder, like:
+
+  `Path_to_ImageNet_val_data//ILSVRC2012_val_00033334.JPEG	`
+
 # How to use
 
 ### Preprocess dataset
+
+<!--we do this on gpuserver9:/home/haoyu/project/lab_project_handin2019/Guided-Denoise-->
+
+<!--Path_to_ImageNet_train='/raid/tianyu/adv_train/imagenet_data/train'-->
+
+<!--Path_to_ImageNet_val_data='/mfs/you/Imagenet/val_data/'-->
 
 ```bash
 mkdir Ogirinset Originset_test # used to save images that prepare_data.ipynb will use 
@@ -50,18 +70,12 @@ Run `prepare_data.ipynb` with jupyter notebook, to convert ImageNet into `Ogirin
 
 ### Run Attackers
 
+<!--we do this on gpuserver3:/home/haoyu/project/Guided-Denoise-->
+
 To generate the attacking samples which will be used to train and test denoiser
 
 ```bash
 mkdir Advset # used to save attacking samples
-```
-
-
-
-```python
-def save_images(arg):
-    image,filename,output_dir = arg
-    imsave(os.path.join(output_dir, filename.decode('utf-8')), (image + 1.0) * 0.5, format='png')
 ```
 
 #### Generate training exsamples
