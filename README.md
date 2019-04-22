@@ -170,17 +170,13 @@ This step only consumes four GPUs. (we used GeForce GTX TITAN X, 12212 MB)
 
 example: here is what we run
 
-# Our RUnning Log
+# Our Running Log
 
 ```bash
-gpuid 0,1,2,3 python main.py --exp sample --batch-size 32 --save-dir debug
+gpuid 0,1,2 python main.py --exp sample --batch-size 32 --save-dir debug
 ```
 
 > ```
-> RuntimeError: CUDA error: out of memory
+> 
 > ```
-
-```bash
-gpuid 0,1,2,3 python main.py --exp sample --batch-size 16 --save-dir debug
-```
 
