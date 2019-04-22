@@ -32,7 +32,7 @@ def train(epoch, net, data_loader, optimizer, get_lr, loss_idcs = [4], requires_
             orig_pred, adv_pred, l = net(orig, adv, requires_control = False)
         else:
             orig_pred, adv_pred, l, control_pred, cl = net(orig, adv, requires_control = True)
-            
+
         _, idcs = orig_pred.data.cpu().max(1)
         orig_acc.append(float(torch.sum(idcs == label)) / len(label))
         _, idcs = adv_pred.data.cpu().max(1)
@@ -46,7 +46,7 @@ def train(epoch, net, data_loader, optimizer, get_lr, loss_idcs = [4], requires_
         loss_values = []
         for ll in l:
             loss_values.append(ll.mean().data[0])
-        loss.append(loss_values)    
+        loss.append(loss_values)
 
         if requires_control:
             _, idcs = control_pred.data.cpu().max(1)
@@ -55,7 +55,7 @@ def train(epoch, net, data_loader, optimizer, get_lr, loss_idcs = [4], requires_
             for ll in cl:
                 loss_values.append(ll.mean().data[0])
             control_loss.append(loss_values)
-             
+
         #print('\torig_acc %.3f, acc %.3f, control_acc %.3f' % (
         #    orig_acc[-1], acc[-1], control_acc[-1]))
         #print('\tloss: %.5f, %.5f, %.5f, %.5f, %.5f' % (
@@ -77,20 +77,20 @@ def train(epoch, net, data_loader, optimizer, get_lr, loss_idcs = [4], requires_
     if requires_control:
         print('Epoch %3d (lr %.5f): orig_acc %.3f, acc %.3f, control_acc %.3f, time %3.1f' % (
             epoch, lr, orig_acc, acc, control_acc, dt))
-    else: 
+    else:
         print('Epoch %3d (lr %.5f): orig_acc %.3f, acc %.3f, time %3.1f' % (
             epoch, lr, orig_acc, acc, dt))
 
     print('\tloss: %.5f, %.5f, %.5f' % (
         loss[0], loss[1], loss[2]))
-    
+
     if requires_control:
         print('\tloss: %.5f, %.5f, %.5f' % (
             control_loss[0], control_loss[1], control_loss[2]))
     print
 
 def val(epoch, net, data_loader, requires_control = True):
-    start_time = time.time()    
+    start_time = time.time()
     net.eval()
 
     orig_acc = []
@@ -107,7 +107,7 @@ def val(epoch, net, data_loader, requires_control = True):
             orig_pred, adv_pred, l = net(orig, adv, requires_control = False, train = False)
         else:
             orig_pred, adv_pred, l, control_pred, cl = net(orig, adv, requires_control = True, train = False)
-            
+
         _, idcs = orig_pred.data.cpu().max(1)
         orig_acc.append(float(torch.sum(idcs == label)) / len(label))
         _, idcs = adv_pred.data.cpu().max(1)
@@ -115,7 +115,7 @@ def val(epoch, net, data_loader, requires_control = True):
         loss_values = []
         for ll in l:
             loss_values.append(ll.mean().data[0])
-        loss.append(loss_values)    
+        loss.append(loss_values)
 
         if requires_control:
             _, idcs = control_pred.data.cpu().max(1)
@@ -124,7 +124,7 @@ def val(epoch, net, data_loader, requires_control = True):
             for ll in cl:
                 loss_values.append(ll.mean().data[0])
             control_loss.append(loss_values)
-             
+
         #print('\torig_acc %.3f, acc %.3f, control_acc %.3f' % (
         #    orig_acc[-1], acc[-1], control_acc[-1]))
         #print('\tloss: %.5f, %.5f, %.5f, %.5f, %.5f' % (
@@ -132,8 +132,8 @@ def val(epoch, net, data_loader, requires_control = True):
         #if requires_control:
         #    print('\tloss: %.5f, %.5f, %.5f, %.5f, %.5f' % (
         #        control_loss[-1][0], control_loss[-1][1], control_loss[-1][2], control_loss[-1][3], control_loss[-1][4]))
-        #print 
-    
+        #print
+
     orig_acc = np.mean(orig_acc)
     acc = np.mean(acc)
     loss = np.mean(loss, 0)
@@ -152,16 +152,16 @@ def val(epoch, net, data_loader, requires_control = True):
 
     print('\tloss: %.5f, %.5f, %.5f' % (
         loss[0], loss[1], loss[2]))
-    
+
     if requires_control:
         print('\tloss: %.5f, %.5f, %.5f' % (
             control_loss[0], control_loss[1], control_loss[2]))
     print
     print
 
-    
+
 def test(net, data_loader, result_file_name, defense = True):
-    start_time = time.time()    
+    start_time = time.time()
     net.eval()
 
     acc_by_attack = {}
@@ -172,14 +172,14 @@ def test(net, data_loader, result_file_name, defense = True):
         _, idcs = adv_pred[-1].data.cpu().max(1)
         corrects = idcs == label
         for correct, attack in zip(corrects, attacks):
-            if acc_by_attack.has_key(attack):
+            if attack in acc_by_attack.keys():
                 acc_by_attack[attack] += correct
             else:
                 acc_by_attack[attack] = correct
     print(result_file_name)
     np.save(result_file_name,acc_by_attack)
-    
-    
+
+
 class Logger(object):
     def __init__(self,logfile):
         self.terminal = sys.stdout

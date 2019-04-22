@@ -1,3 +1,4 @@
+
 import torch
 import numpy as np
 import os
@@ -14,18 +15,19 @@ class DefenseDataset(Dataset):
         self.phase = phase
         self.dataset = dataset
         self.attack = attack
-        
+
         self.adv_path = os.path.abspath('../Advset/attacks_output')
         if phase == 'train' or phase == 'val':
             self.orig_path = os.path.abspath('../Originset/')
         else:
             self.orig_path = os.path.abspath('../Originset_test/')
-    
+
         self.adv_names = []
         i = 0
         for att in self.attack:
             detect = 0
             for data in dataset:
+                # print('data = ', data)
                 if 'png' not in data:
                     data = data+'.png'
                 self.adv_names += [os.path.join(self.adv_path,att,data)]
@@ -37,7 +39,7 @@ class DefenseDataset(Dataset):
         self.config = config
 
     def __getitem__(self, idx):
-        
+
         adv_name = self.adv_names[idx]
         failed = not os.path.exists(os.path.join(self.adv_path, adv_name))
         try:
@@ -52,21 +54,21 @@ class DefenseDataset(Dataset):
             print(['failed',os.path.join(self.adv_path, adv_name)])
             orig_name = os.path.basename(adv_name)
             adv_img = imread(os.path.join(self.orig_path, orig_name))
-            
+
         orig_name = os.path.basename(adv_name)
         key = os.path.basename(orig_name).split('.')[0]
         label = self.labels[key] - 1
-        
+
         if self.phase == 'test':
             adv_img = normalize([adv_img],self.config['net_type'])[0]
             adv_img = np.transpose(adv_img, [2, 0, 1])
             return torch.from_numpy(adv_img.copy()), label, adv_name.split('/')[-2]
 
-        
+
         orig_img = imread(os.path.join(self.orig_path, orig_name))
         if orig_img.shape[2] == 4:
             orig_img = orig_img[:, :, :3]
-        
+
 
         adv_img, orig_img = augment([adv_img, orig_img], self.config,
                                     self.phase == 'train')
@@ -78,7 +80,7 @@ class DefenseDataset(Dataset):
         orig_img = np.transpose(orig_img, [2, 0, 1])
         return torch.from_numpy(orig_img.copy()), torch.from_numpy(
                 adv_img.copy()), label
-        
+
     def __len__(self):
         return len(self.adv_names)
 
@@ -101,12 +103,12 @@ def augment(imgs, config, train):
     if train:
         np.random.seed(int(time.time() * 1000000) % 1000000000)
 
-    if config.has_key('flip') and config['flip'] and train:
+    if 'flip' in config.keys() and config['flip'] and train:
         stride = np.random.randint(2) * 2 - 1
         for i in range(len(imgs)):
             imgs[i] = imgs[i][:, ::stride, :]
 
-    if config.has_key('crop_size'):
+    if 'crop_size' in config.keys():
         crop_size = config['crop_size']
         if train:
             h = np.random.randint(imgs[0].shape[0] - crop_size[0] + 1)
