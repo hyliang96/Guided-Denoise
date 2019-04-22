@@ -19,7 +19,7 @@ parser.add_argument('--exp', '-e', metavar='MODEL', default='sample',
                     help='model')
 parser.add_argument('-j', '--workers', default=32, type=int, metavar='N',
                     help='number of data loading workers (default: 32)')
-parser.add_argument('--epochs', default=100, type=int, metavar='N',
+parser.add_argument('--epochs', default=20, type=int, metavar='N',
                     help='number of total epochs to run')
 parser.add_argument('--start-epoch', default=0, type=int, metavar='N',
                     help='manual epoch number (useful on restarts)')
@@ -43,7 +43,7 @@ parser.add_argument('--debug', action = 'store_true',
                     help='debug mode')
 parser.add_argument('--test', default='0', type=int, metavar='T',
                     help='test mode')
-parser.add_argument('--test_e4', default=0, type=int, metavar = 'T', 
+parser.add_argument('--test_e4', default=0, type=int, metavar = 'T',
                     help= 'test eps 4')
 parser.add_argument('--defense', default=1, type=int, metavar='T',
                     help='test mode')
@@ -54,6 +54,8 @@ def main():
 
     global args
     args = parser.parse_args()
+    for k, v in sorted(vars(args).items()):
+        print ("  %20s: %s" % (k, v))
 
     modelpath = os.path.join(os.path.abspath('../Exps'),args.exp)
     train_data = np.load(os.path.join(modelpath,'train_split.npy'))
@@ -64,7 +66,7 @@ def main():
     sys.path.append(modelpath)
     model = import_module('model')
     config, net = model.get_model()
-    
+
     start_epoch = args.start_epoch
     save_dir = args.save_dir
     if args.resume:
@@ -87,13 +89,13 @@ def main():
     print(save_dir)
     if args.test == 1 or args.test_e4 == 1:
         net = net.net
-        
+
     if args.debug:
         net = net.cuda()
     else:
         net = DataParallel(net).cuda()
     cudnn.benchmark = True
-    
+
     if args.test == 1 or args.test_e4 == 1:
         test_attack = []
         if args.test == 1:
@@ -111,7 +113,7 @@ def main():
             shuffle = False,
             num_workers = args.workers,
             pin_memory = True)
-        if args.resume != '': 
+        if args.resume != '':
             resumeid = args.resume.split('.')[-2].split('/')[-1]
         else:
             resumeid = 0
@@ -140,7 +142,7 @@ def main():
         shuffle = True,
         num_workers = args.workers,
         pin_memory = True)
- 
+
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
         logfile = os.path.join(save_dir,'log')
@@ -148,7 +150,7 @@ def main():
         pyfiles = [f for f in os.listdir('./') if f.endswith('.py')]
         for f in pyfiles:
             shutil.copy(f, os.path.join(save_dir, f))
-    
+
     if isinstance(net, DataParallel):
         params = net.module.net.denoise.parameters()
     else:

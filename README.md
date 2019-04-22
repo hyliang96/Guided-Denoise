@@ -164,7 +164,11 @@ This step only consumes four GPUs. (we used GeForce GTX TITAN X, 12212 MB)
 
     add  `--save-dir <name>`, here `<name>` takes place of `time_stamp`. You can set a `<name>` for each expriment
 
-  - add `--resume <path_to_the_checkpoint_file_you_want_to_load>` to continue from this checkpoint
+  - add `--resume <path_to_the_checkpoint_file_you_want_to_load>` to continue from this checkpoint, like
+
+    ```bash
+    --resume ../Exps/sample/results/debug/001.ckpt # `--start-epoch 2` is no uncessary to add because the current epoch is saved in 001.ckpt
+    ```
 
   foremore arguments, see the head of  `GD_train/main.py`
 
@@ -174,6 +178,7 @@ example: here is what we run
 
 ```bash
 gpuid 0,1,2 python main.py --exp sample --batch-size 32 --save-dir debug
+# --resume ../Exps/sample/results/debug/0xx.ckpt 
 ```
 
 > ```
@@ -181,6 +186,14 @@ gpuid 0,1,2 python main.py --exp sample --batch-size 32 --save-dir debug
 > [0] GeForce GTX TITAN X | 83'C,  93 % | 11563 / 12212 MB | haoyu(11542M)
 > [1] GeForce GTX TITAN X | 84'C,  91 % | 11721 / 12212 MB | haoyu(11700M)
 > [2] GeForce GTX TITAN X | 83'C,  49 % | 10286 / 12212 MB | haoyu(10265M)
+> defence:
+> [0] GeForce GTX TITAN X | 83'C,  78 % |  3920 / 12212 MB | haoyu(3899M)
+> [1] GeForce GTX TITAN X | 85'C,  73 % |  3308 / 12212 MB | haoyu(3287M)
+> [2] GeForce GTX TITAN X | 83'C,  35 % |  3333 / 12212 MB | haoyu(3314M)
+> testing:
+> [0] GeForce GTX TITAN X | 79'C, 100 % |  1322 / 12212 MB | haoyu(1345M)
+> [1] GeForce GTX TITAN X | 80'C,   0 % |  1218 / 12212 MB | haoyu(1197M)
+> [2] GeForce GTX TITAN X | 80'C,   0 % |  1260 / 12212 MB | haoyu(1241M)
 > ```
 
 testing and validating consume less gpu memory than training

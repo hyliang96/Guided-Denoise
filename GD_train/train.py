@@ -59,7 +59,7 @@ def train(epoch, net, data_loader, optimizer, get_lr, loss_idcs = [4], requires_
 
     n_batch = len(data_loader)
     for i, (orig, adv, label) in enumerate(data_loader):
-        progess_bar((i+1)/n_batch, precision=4,num_block=70, prefix='train',
+        progess_bar((i+1)/n_batch, precision=4,num_block=70, prefix='epoch %03d train' % epoch,
             suffix="Batch %4d / %4d"%(i+1, n_batch), clean=True)
         # orig = Variable(orig.cuda(async = True), volatile = True)
         # adv = Variable(adv.cuda(async = True), volatile = True)
@@ -151,7 +151,7 @@ def val(epoch, net, data_loader, requires_control = True):
 
     n_batch = len(data_loader)
     for i, (orig, adv, label) in enumerate(data_loader):
-        progess_bar((i+1)/n_batch, precision=4, num_block=70, prefix='val  ',
+        progess_bar((i+1)/n_batch, precision=4, num_block=70, prefix='epoch %03d val  ' % epoch,
             suffix="Batch %4d / %4d"%(i+1, n_batch), clean=True)
 
         # orig = Variable(orig.cuda(async = True), volatile = True)
