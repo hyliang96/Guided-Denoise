@@ -117,7 +117,7 @@ class InceptionE(nn.Module):
     def __init__(self, in_channels):
         super(InceptionE, self).__init__()
         self.branch0 = nn.Sequential(BasicConv2d(in_channels, 320, kernel_size=1))
-             
+
         self.branch1_0 = BasicConv2d(in_channels, 384, kernel_size=1)
         self.branch1_1 = BasicConv2d(384, 384, kernel_size=(1, 3), padding=(0, 1))
         self.branch1_2 = BasicConv2d(384, 384, kernel_size=(3, 1), padding=(1, 0))
@@ -194,7 +194,7 @@ class BasicConv2d(nn.Module):
         x = self.relu(x)
         return x
 
- 
+
 class Conv(nn.Module):
     def __init__(self, n_in, n_out, stride = 1):
         super(Conv, self).__init__()
@@ -271,7 +271,7 @@ class Denoise(nn.Module):
             expansion = 4
         else:
             expansion = 1
-        
+
         fwd = []
         n_in = fwd_in
         for i in range(len(num_fwd)):
@@ -315,7 +315,7 @@ class Denoise(nn.Module):
             out = self.fwd[i](out)
             if i != len(self.fwd) - 1:
                 outputs.append(out)
-        
+
         for i in range(len(self.back) - 1, -1, -1):
             out = self.upsample[i](out)
             out = torch.cat((out, outputs[i]), 1)
@@ -333,7 +333,7 @@ class Inception3(nn.Module):
         self.conv2d_2b = BasicConv2d(32, 64, kernel_size=3, stride=1, padding=1)
         self.conv2d_3b = BasicConv2d(64, 80, kernel_size=1, stride=1)
         self.conv2d_4a = BasicConv2d(80, 192, kernel_size=3, stride=1)
-	self.Mixed_5b = InceptionA(192, pool_features=32)
+        self.Mixed_5b = InceptionA(192, pool_features=32)
         self.Mixed_5c = InceptionA(256, pool_features=64)
         self.Mixed_5d = InceptionA(288, pool_features=64)
         self.Mixed_6a = InceptionB(288)
@@ -483,7 +483,7 @@ def get_net(input_size, block, fwd_out, num_fwd, back_out, num_back, n, hard_min
     pretrain_dict = torch.load(os.path.join(dir_path,'inceptionv3_state.pth'))
     state_dict = net.net.state_dict()
     for key in pretrain_dict.keys():
-        assert state_dict.has_key(key)
+        assert key in state_dict.keys()
         value = pretrain_dict[key]
         if not isinstance(value, torch.FloatTensor):
             value = value.data

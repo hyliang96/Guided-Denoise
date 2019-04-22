@@ -8,9 +8,13 @@ The winning submission for NIPS 2017: Defense Against Adversarial Attack of team
 
 # Our Experiment environment
 
-tensorflow-gpu=1.9.0
-
 GeForce GTX TITAN X
+
+Python 3.6.7
+
+```bash
+pip insatll tensorflow-gpu=1.9.0 torch==0.4.1 torchvision==0.2.1
+```
 
 # File Description
 
@@ -110,7 +114,8 @@ mkdir Advset # used to save attacking samples
 - run  guided denoiser
 
   ```bash
-  python GD_train/main.py --exp <defense_model> [other_arguments]
+  cd GD_train
+  python /main.py --exp <defense_model> [other_arguments]
   ```
 
   - `<defense_model>`=` sample`: to use defense model in  `Exps/sample/model.py`
