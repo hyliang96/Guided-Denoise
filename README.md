@@ -177,6 +177,10 @@ gpuid 0,1,2 python main.py --exp sample --batch-size 32 --save-dir debug
 ```
 
 > ```
-> 
+> training:
+> [0] GeForce GTX TITAN X | 83'C,  93 % | 11563 / 12212 MB | haoyu(11542M)
+> [1] GeForce GTX TITAN X | 84'C,  91 % | 11721 / 12212 MB | haoyu(11700M)
+> [2] GeForce GTX TITAN X | 83'C,  49 % | 10286 / 12212 MB | haoyu(10265M)
 > ```
 
+testing and validating consume less gpu memory than training

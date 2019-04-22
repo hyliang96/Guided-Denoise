@@ -491,9 +491,6 @@ class Net(nn.Module):
                 adv_outputs = self.net(adv_x, defense = True)
                 loss = self.loss(adv_outputs, orig_outputs)
 
-        # print("net loss:", 'type =',type(loss) , "len =", len(loss)) # list net loss, len = 6
-        # print("net loss:", loss)
-
         if not requires_control:
             return orig_outputs[-1], adv_outputs[-1], loss
         else:
