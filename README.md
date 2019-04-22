@@ -8,7 +8,7 @@ The winning submission for NIPS 2017: Defense Against Adversarial Attack of team
 
 # Our Experiment environment
 
-GeForce GTX TITAN X
+GeForce GTX TITAN X, 12212 MB
 
 Python 3.6.7
 
@@ -78,6 +78,8 @@ Run `prepare_data.ipynb` with jupyter notebook, to convert ImageNet into `Ogirin
 
 To generate the attacking samples which will be used to train and test denoiser
 
+This step only consumes one GPU. (we used GeForce GTX TITAN X, 12212 MB)
+
 ```bash
 mkdir Advset # used to save attacking samples
 ```
@@ -111,6 +113,8 @@ mkdir Advset # used to save attacking samples
 
 ### Run guided denoiser
 
+This step only consumes four GPUs. (we used GeForce GTX TITAN X, 12212 MB)
+
 - run  guided denoiser
 
   ```bash
@@ -120,4 +124,5 @@ mkdir Advset # used to save attacking samples
 
   - `<defense_model>`=` sample`: to use defense model in  `Exps/sample/model.py`
   - you can also specify other arguements like `--xxxx xxxx` defined in  `GD_train/main.py`
+  - if return rerror "out of cuda memmory", then add `--batch-size 16`
 
