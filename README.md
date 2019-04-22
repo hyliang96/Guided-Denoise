@@ -123,6 +123,13 @@ This step only consumes four GPUs. (we used GeForce GTX TITAN X, 12212 MB)
   ```
 
   - `<defense_model>`=` sample`: to use defense model in  `Exps/sample/model.py`
-  - you can also specify other arguements like `--xxxx xxxx` defined in  `GD_train/main.py`
+
   - if return rerror "out of cuda memmory", then add `--batch-size 16`
 
+  - The checkpoints of  guided denoiser are saved in `Exps/resnet/results/<time_stamp>/xxx.ckpt`
+
+    add  `--save-dir <the_name_you_set_for_this_expriment>`
+
+  - add `--resume <path_to_the_checkpoint_file_you_want_to_load>` to continue from this checkpoint
+
+  foremore arguments, see the head of  `GD_train/main.py`
