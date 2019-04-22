@@ -37,6 +37,7 @@ The files and dirs directly under this repo folder are the following:
 - checkpoints: the checkpoints of, download [here](https://pan.baidu.com/s/1kVzP9nL)
   - target classification models for the attacks used to generate training and testing exsamples
   - baseline defence models with adversarial training
+- `Exps/sample/inceptionv3_state.pth`: [download here](https://github.com/lfz/Guided-Denoise/blob/master/Exps/sample/inceptionv3_state.pth)
 
 ### scripts
 
@@ -48,11 +49,11 @@ The files and dirs directly under this repo folder are the following:
 
 You need to download ImageNet before preprocessing dataset , and 
 
-* please make the ImageNet training images in 1000 folders, a folder for each class, like:
+- please make the ImageNet training images in 1000 folders, a folder for each class, like:
 
   `Path_to_ImageNet_train/n04485082/n04485082_1000.JPEG`
 
-* please make the ImageNet validating images in one folder, like:
+- please make the ImageNet validating images in one folder, like:
 
   `Path_to_ImageNet_val_data//ILSVRC2012_val_00033334.JPEG	`
 
@@ -88,7 +89,14 @@ mkdir Advset # used to save attacking samples
 
 - modifying arguments in `toolkit/run_attacks.sh`:
 
-  - `--models=<attack_name1>,<attack_name2>,...`：<attack_namei> is the name of a dir under `Attackset/`
+  - `--models=<attack_method1>,<attack_method2>,...`
+
+    To see all attack methods, just run
+
+    ```bash
+    ls Attackset/
+    ```
+
   - `--models=all`: all attacks in `Attackset/`
 
 - run attacker
@@ -115,6 +123,32 @@ mkdir Advset # used to save attacking samples
 
 This step only consumes four GPUs. (we used GeForce GTX TITAN X, 12212 MB)
 
+- Select attack methods for training a guided denoiser	
+
+  edit `Exps/sample/train_attack.txt`, write in the fellowing form. The following setting is to reproducing our [paper](https://arxiv.org/abs/1712.02976).
+
+  ```txt
+  fgsm_v3_random,
+  fgsm_inresv2_random,
+  fgsm_resv2_random,
+  fgsm_v3_resv2_inresv2_random,
+  Iter2_v3_resv2_inresv2_random,
+  Iter4_v3_resv2_inresv2_random,
+  Iter8_v3_resv2_inresv2_random
+  ```
+
+  please make sure all method in `train_attack` are used to generated training exmaples which are set before in `toolkit/run_attacks.sh`.
+
+  And so `Exps/sample/test_attack.txt` does, for testing the guided denoiser. The following setting is to reproducing our [paper](https://arxiv.org/abs/1712.02976).
+
+  ```txt
+  fgsm_v3_random,
+  Iter4_v3_resv2_inresv2_random,
+  fgsm_v4_random,
+  Iter4_v4_eps4,
+  Iter4_v4_eps16
+  ```
+
 - run  guided denoiser
 
   ```bash
@@ -128,8 +162,16 @@ This step only consumes four GPUs. (we used GeForce GTX TITAN X, 12212 MB)
 
   - The checkpoints of  guided denoiser are saved in `Exps/resnet/results/<time_stamp>/xxx.ckpt`
 
-    add  `--save-dir <the_name_you_set_for_this_expriment>`
+    add  `--save-dir <name>`, here `<name>` takes place of `time_stamp`. You can set a `<name>` for each expriment
 
   - add `--resume <path_to_the_checkpoint_file_you_want_to_load>` to continue from this checkpoint
 
   foremore arguments, see the head of  `GD_train/main.py`
+
+example: here is what we run
+
+```bash
+gpuid 0,1,2 python main.py --exp sample --batch-size 8 --save-dir debug
+
+```
+

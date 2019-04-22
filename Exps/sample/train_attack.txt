@@ -1,8 +1,7 @@
-noop, 
-random_noise, 
-fgsm_v3, 
-fgsm_resv2,
-fgsm_inresv2,
-fgsm_v3_resv2_inresv2, 
-Iter2_v3_resv2_inresv2, 
-Iter4_v3_resv2_inresv2
+fgsm_v3_random,
+fgsm_inresv2_random,
+fgsm_resv2_random,
+fgsm_v3_resv2_inresv2_random,
+Iter2_v3_resv2_inresv2_random,
+Iter4_v3_resv2_inresv2_random,
+Iter8_v3_resv2_inresv2_random
