@@ -25,8 +25,10 @@ def train(epoch, net, data_loader, optimizer, get_lr, loss_idcs = [4], requires_
         control_acc = []
         control_loss = []
     for i, (orig, adv, label) in enumerate(data_loader):
-        orig = Variable(orig.cuda(async = True), volatile = True)
-        adv = Variable(adv.cuda(async = True), volatile = True)
+        # orig = Variable(orig.cuda(async = True), volatile = True)
+        # adv = Variable(adv.cuda(async = True), volatile = True)
+        orig = Variable(orig.cuda(async = True))
+        adv = Variable(adv.cuda(async = True))
 
         if not requires_control:
             orig_pred, adv_pred, l = net(orig, adv, requires_control = False)
@@ -100,8 +102,10 @@ def val(epoch, net, data_loader, requires_control = True):
         control_acc = []
         control_loss = []
     for i, (orig, adv, label) in enumerate(data_loader):
-        orig = Variable(orig.cuda(async = True), volatile = True)
-        adv = Variable(adv.cuda(async = True), volatile = True)
+        # orig = Variable(orig.cuda(async = True), volatile = True)
+        # adv = Variable(adv.cuda(async = True), volatile = True)
+        orig = Variable(orig.cuda(async = True))
+        adv = Variable(adv.cuda(async = True))
 
         if not requires_control:
             orig_pred, adv_pred, l = net(orig, adv, requires_control = False, train = False)
@@ -166,7 +170,8 @@ def test(net, data_loader, result_file_name, defense = True):
 
     acc_by_attack = {}
     for i, (adv, label, attacks) in enumerate(data_loader):
-        adv = Variable(adv.cuda(async = True), volatile = True)
+        # adv = Variable(adv.cuda(async = True), volatile = True)
+        adv = Variable(adv.cuda(async = True))
 
         adv_pred = net(adv, defense = defense)
         _, idcs = adv_pred[-1].data.cpu().max(1)

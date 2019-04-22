@@ -459,18 +459,40 @@ class Net(nn.Module):
         self.loss = Loss(n, hard_mining, loss_norm)
 
     def forward(self, orig_x, adv_x, requires_control = True, train = True):
-        orig_outputs = self.net(orig_x)
+        # orig_outputs = self.net(orig_x)
 
-        if requires_control:
-            control_outputs = self.net(adv_x)
-            control_loss = self.loss(control_outputs, orig_outputs)
+        # if requires_control:
+        #     control_outputs = self.net(adv_x)
+        #     control_loss = self.loss(control_outputs, orig_outputs)
+
+        # if train:
+        #     adv_x.volatile = False
+        #     for i in range(len(orig_outputs)):
+        #         orig_outputs[i].volatile = False
+        # adv_outputs = self.net(adv_x, defense = True)
+        # loss = self.loss(adv_outputs, orig_outputs)
+
+        # if not requires_control:
+        #     return orig_outputs[-1], adv_outputs[-1], loss
+        # else:
+        #     return orig_outputs[-1], adv_outputs[-1], loss, control_outputs[-1], control_loss
+
+        with torch.no_grad():
+            orig_outputs = self.net(orig_x)
+            if requires_control:
+                control_outputs = self.net(adv_x)
+                control_loss = self.loss(control_outputs, orig_outputs)
 
         if train:
-            adv_x.volatile = False
-            for i in range(len(orig_outputs)):
-                orig_outputs[i].volatile = False
-        adv_outputs = self.net(adv_x, defense = True)
-        loss = self.loss(adv_outputs, orig_outputs)
+            adv_outputs = self.net(adv_x, defense = True)
+            loss = self.loss(adv_outputs, orig_outputs)
+        else:
+            with torch.no_grad():
+                adv_outputs = self.net(adv_x, defense = True)
+                loss = self.loss(adv_outputs, orig_outputs)
+
+        # print("net loss:", 'type =',type(loss) , "len =", len(loss)) # list net loss, len = 6
+        # print("net loss:", loss)
 
         if not requires_control:
             return orig_outputs[-1], adv_outputs[-1], loss
