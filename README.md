@@ -84,7 +84,7 @@ You need to download ImageNet before preprocessing dataset , and
 <!--Path_to_ImageNet_val_data='/mfs/you/Imagenet/val_data/'-->
 
 ```bash
-mkdir Ogirinset Originset_test # used to save images that prepare_data.ipynb will use 
+mkdir Originset Originset_test # used to save images that prepare_data.ipynb will use 
 ```
 
 Run `prepare_data.ipynb` with jupyter notebook, to convert ImageNet into `Ogirinset`, `Originset_test`
