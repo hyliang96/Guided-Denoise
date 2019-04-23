@@ -3,7 +3,7 @@
 /utils/*split*
 /dev_dataset.csv
 /dev_dataset_test.csv
-/.ipynb_checkpoints
+.ipynb_checkpoints
 /checkpoints/*
 /GD_train/results
 /GD_train/test_results

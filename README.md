@@ -47,7 +47,9 @@ The files and dirs directly under this repo folder are the following:
 - GD_train: train the defense model using guided denoise
 - PD_train: train the defense model using pixel denoise
 
-# Dataset
+# Downloading
+
+## Dataset
 
 You need to download ImageNet before preprocessing dataset , and 
 
@@ -58,6 +60,18 @@ You need to download ImageNet before preprocessing dataset , and
 - please make the ImageNet validating images in one folder, like:
 
   `Path_to_ImageNet_val_data//ILSVRC2012_val_00033334.JPEG	`
+
+## Checkpoints
+
+* Download checkpoints of attacked classifiers that used to generate adversarial exsample
+
+  ```bash
+  mkdir checkpoints
+  ```
+
+  and download  [here](https://pan.baidu.com/s/1kVzP9nL) to `./checkpoints`
+
+* Download the [checkpoint](https://github.com/lfz/Guided-Denoise/blob/master/Exps/sample/inceptionv3_state.pth) of the defensed classifier to `Exps/sample/inceptionv3_state.pth`
 
 # How to use
 
@@ -172,9 +186,7 @@ This step only consumes 3 GPUs. (we used GeForce GTX TITAN X, 12212 MB)
     --resume ../Exps/sample/results/debug/001.ckpt # `--start-epoch 2` is no uncessary to add because the current epoch is saved in 001.ckpt
     ```
 
-  foremore arguments, see the head of  `GD_train/main.py`
-
-example: here is what we run
+  for more arguments, see the head of  `GD_train/main.py`
 
 # Our Running Log
 
