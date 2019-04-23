@@ -1,7 +1,1 @@
-fgsm_v3_random,
-fgsm_inresv2_random,
-fgsm_resv2_random,
-fgsm_v3_resv2_inresv2_random,
-Iter2_v3_resv2_inresv2_random,
-Iter4_v3_resv2_inresv2_random,
-Iter8_v3_resv2_inresv2_random
+Iter4_v4_random
