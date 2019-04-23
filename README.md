@@ -1,8 +1,10 @@
 # Guided-Denoise
 
+Reproducing lfz/Guided-Denoise and rewrite a clearer readme for it
+
 The winning submission for NIPS 2017: Defense Against Adversarial Attack of team TSAIL
 
-# Paper 
+# Paper
 
 [Defense against Adversarial Attacks Using High-Level Representation Guided Denoiser](https://arxiv.org/abs/1712.02976)
 
@@ -51,7 +53,7 @@ The files and dirs directly under this repo folder are the following:
 
 ## Dataset
 
-You need to download ImageNet before preprocessing dataset , and 
+You need to download ImageNet before preprocessing dataset , and
 
 - please make the ImageNet training images in 1000 folders, a folder for each class, like:
 
@@ -84,7 +86,7 @@ You need to download ImageNet before preprocessing dataset , and
 <!--Path_to_ImageNet_val_data='/mfs/you/Imagenet/val_data/'-->
 
 ```bash
-mkdir Originset Originset_test # used to save images that prepare_data.ipynb will use 
+mkdir Originset Originset_test # used to save images that prepare_data.ipynb will use
 ```
 
 Run `prepare_data.ipynb` with jupyter notebook, to convert ImageNet into `Ogirinset`, `Originset_test`
@@ -139,7 +141,7 @@ mkdir Advset # used to save attacking samples
 
 This step only consumes 3 GPUs. (we used GeForce GTX TITAN X, 12212 MB)
 
-- Select attack methods for training a guided denoiser	
+- Select attack methods for training a guided denoiser
 
   edit `Exps/sample/train_attack.txt`, write in the fellowing form. The following setting is to reproducing our [paper](https://arxiv.org/abs/1712.02976).
 
@@ -192,7 +194,7 @@ This step only consumes 3 GPUs. (we used GeForce GTX TITAN X, 12212 MB)
 
 ```bash
 gpuid 0,1,2 python main.py --exp sample --batch-size 32 --save-dir debug
-# --resume ../Exps/sample/results/debug/0xx.ckpt 
+# --resume ../Exps/sample/results/debug/0xx.ckpt
 ```
 
 > ```
