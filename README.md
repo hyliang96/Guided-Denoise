@@ -8,7 +8,9 @@ The winning submission for NIPS 2017: Defense Against Adversarial Attack of team
 
 # Our Experiment environment
 
-GeForce GTX TITAN X, 12212 MB
+three GeForce GTX TITAN X, 12212 MB
+
+cuda 8.0, 9.0, 10.0 are all installed, but not sure tensorflow and pytorch was using which cuda version
 
 Python 3.6.7
 
@@ -121,7 +123,7 @@ mkdir Advset # used to save attacking samples
 
 ### Run guided denoiser
 
-This step only consumes four GPUs. (we used GeForce GTX TITAN X, 12212 MB)
+This step only consumes 3 GPUs. (we used GeForce GTX TITAN X, 12212 MB)
 
 - Select attack methods for training a guided denoiser	
 

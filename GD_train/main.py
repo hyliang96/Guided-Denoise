@@ -4,7 +4,7 @@ import os
 import sys
 import argparse
 from importlib import import_module
-from train import train, val,  test, Logger
+from train import train, val,  test, Logger, output_state
 import shutil
 import time
 
@@ -179,7 +179,10 @@ def main():
 
     for epoch in range(start_epoch, args.epochs + 1):
         requires_control = epoch == start_epoch
-        train(epoch, net, train_loader, optimizer, get_lr, config['loss_idcs'], requires_control = requires_control)
+        if (epoch-start_epoch)%5 == 0:
+            output_state(ifhead=True)
+        train(epoch, net, train_loader, optimizer, get_lr, config['loss_idcs'],
+            requires_control = requires_control)
         val(epoch, net, val_loader, requires_control = requires_control)
 
         if epoch % args.save_freq == 0:
