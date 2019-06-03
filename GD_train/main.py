@@ -1,10 +1,40 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#                      *
+#                  *       *
+#                *           *
+#              *    _oo8oo_    *
+#             *    o8888888o    *
+#            *     88" . "88     *
+#            *     (| -_- |)     *
+#             *    0\  =  /0    *
+#              * ___/'==='\___ *
+#              .' \|     |// '.
+#             / \|||  :  |||// \
+#            / _||||| -:- |||||_ \
+#           |   | \\  -  /// |   |
+#           | \_|  ''\---/''  |_/ |
+#           \  .-\__  '-'  __/-.  /
+#         ___'. .'  /--.--\  '. .'___
+#      ."" '<  '.___\_<|>_/___.'  >' "".
+#     | | :  `- `.:`\ _ /`:.`/ -`  : | |
+#     \  \ `-.   \_ __\ /__ _/   .-` /  /
+# =====`-.____`.___ \_____/ ___.`____.-`=====
+#                   `=---=`
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  X X X X X X X X X X X X X X X X X X X X X
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#      Buddha Bless      No Bug Forever
+#          佛祖保佑          永无疤疙
+
 import torch
 import numpy as np
 import os
 import sys
 import argparse
 from importlib import import_module
-from train import train, val,  test, Logger, output_state
+from train import train, val,  test, output_state # ,Logger
+from print_utlis  import Log
 import shutil
 import time
 
@@ -51,11 +81,11 @@ parser.add_argument('--optimizer', default='adam', type=str, metavar='O',
                     help='optimizer')
 
 def main():
-
     global args
     args = parser.parse_args()
-    for k, v in sorted(vars(args).items()):
-        print ("  %20s: %s" % (k, v))
+
+    if args.workers > args.batch_size:
+        args.workers = args.batch_size
 
     modelpath = os.path.join(os.path.abspath('../Exps'),args.exp)
     train_data = np.load(os.path.join(modelpath,'train_split.npy'))
@@ -86,7 +116,14 @@ def main():
             save_dir = os.path.join(modelpath,'results',  exp_id)
         else:
             save_dir = os.path.join(modelpath,'results', save_dir)
-    print(save_dir)
+
+    log=Log(os.path.join(save_dir, 'log'), 'a')
+    print('input args')
+    for k, v in sorted(vars(args).items()):
+        print ("  %20s: %s" % (k, v))
+    print('save_dir =', save_dir)
+
+
     if args.test == 1 or args.test_e4 == 1:
         net = net.net
 
@@ -110,22 +147,33 @@ def main():
         test_loader = DataLoader(
             dataset,
             batch_size = args.batch_size,
-            shuffle = False,
+            shuffle = True,
             num_workers = args.workers,
             pin_memory = True)
+
+        setattr(test_loader, "num_orig_data", dataset.num_orig_data())
         if args.resume != '':
             resumeid = args.resume.split('.')[-2].split('/')[-1]
         else:
             resumeid = 0
-        print(args.defense)
+
         args.defense = args.defense==1
+        print('args.defense =', args.defense)
+
+        save_path = os.path.join(save_dir, 'test_result')
+        os.makedirs(save_path, exist_ok=True) # if no such path exists, iteratively created the dir
         if args.defense:
-            name = 'test_result/result_%s_%s'%(args.exp,resumeid)
+            save_path = os.path.join(save_path, 'result_%s_%s'%(args.exp,resumeid))
         else:
-            name = 'test_result/result_%s_%s_nodefense'%(args.exp,resumeid)
+            save_path = os.path.join(save_path, 'result_%s_%s_nodefense'%(args.exp,resumeid))
         if args.test_e4:
-            name = name+'_e4'
-        test(net, test_loader, name, args.defense)
+            save_path = save_path+'_e4'
+        print('save_path =', save_path)
+        
+        # if args.defense:
+            # test(net, test_loader, save_path, defense=1)
+        test(net, test_loader, save_path, defense=args.defense)
+
         return
 
     dataset = DefenseDataset(config,  'train', train_data, train_attack)
@@ -145,8 +193,8 @@ def main():
 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
-        logfile = os.path.join(save_dir,'log')
-        sys.stdout = Logger(logfile)
+        # logfile = os.path.join(save_dir,'log')
+        # sys.stdout = Logger(logfile)
         pyfiles = [f for f in os.listdir('./') if f.endswith('.py')]
         for f in pyfiles:
             shutil.copy(f, os.path.join(save_dir, f))
@@ -198,6 +246,8 @@ def main():
                 'state_dict': state_dict,
                 'args': args},
                 os.path.join(save_dir, '%03d.ckpt' % epoch))
+    
+    log.close()
 
 if __name__ == '__main__':
     main()

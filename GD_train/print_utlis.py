@@ -21,10 +21,10 @@ class Log(object):
 #   - 不支持'\r'输出到文件（vim下'\r'会显示为^M），支持'\r'输出到文件，故进度条只能在屏幕上显示
 # 直到log.close()，print才变为只输出到屏幕
 
-    def __init__(self, filename='',*args):
+    def __init__(self, filename='',mode='w',*args):
         # filename =
          # time.strftime("%m-%d_%H:%M:%S", time.localtime())+filename
-        self.f = open(filename, 'w')
+        self.f = open(filename, mode)
         sys.stdout = self
         print('====== log start ======',
             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),

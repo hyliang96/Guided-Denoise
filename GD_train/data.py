@@ -84,6 +84,9 @@ class DefenseDataset(Dataset):
     def __len__(self):
         return len(self.adv_names)
 
+    def num_orig_data(self):
+        return len(self.dataset)
+
 
 def read_labels(filename='dev_dataset.csv'):
     f = open(filename, 'r')

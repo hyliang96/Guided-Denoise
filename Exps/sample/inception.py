@@ -4,6 +4,8 @@ import torch.nn.functional as F
 from collections import OrderedDict
 import numpy as np
 import os
+import warnings
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class InceptionA(nn.Module):
@@ -317,7 +319,17 @@ class Denoise(nn.Module):
                 outputs.append(out)
 
         for i in range(len(self.back) - 1, -1, -1):
-            out = self.upsample[i](out)
+            # to hide warning 
+            # '''
+            #  Default upsampling behavior when mode=bilinear is changed to align_corners=False since 0.4.0. 
+            #  Please specify align_corners=True if the old behavior is desired. See the documentation of nn.Upsample for details.
+            # '''
+            # '''
+            # nn.Upsampling is deprecated. Use nn.functional.interpolate instead.
+            # '''
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                out = self.upsample[i](out)
             out = torch.cat((out, outputs[i]), 1)
             out = self.back[i](out)
         out = self.final(out)
