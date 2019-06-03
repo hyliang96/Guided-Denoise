@@ -24,22 +24,27 @@ class DefenseDataset(Dataset):
 
         self.adv_names = []
         i = 0
+        if self.phase == 'test':
+            self.attack = ['Original']+self.attack
         for att in self.attack:
             detect = 0
             for data in dataset:
                 # print('data = ', data)
                 if 'png' not in data:
                     data = data+'.png'
-                self.adv_names += [os.path.join(self.adv_path,att,data)]
+                if att == 'Original':
+                    self.adv_names += [os.path.join(self.orig_path,data)]
+                else:
+                    self.adv_names += [os.path.join(self.adv_path,att,data)]
                 if os.path.exists(self.adv_names[-1]):
                     detect+=1
                 i+=1
             print('%s: %d'%(att,detect))
+
         self.labels = np.load('../utils/labels.npy').item()  #read_labels()
         self.config = config
 
     def __getitem__(self, idx):
-
         adv_name = self.adv_names[idx]
         failed = not os.path.exists(os.path.join(self.adv_path, adv_name))
         try:
@@ -63,23 +68,17 @@ class DefenseDataset(Dataset):
             adv_img = normalize([adv_img],self.config['net_type'])[0]
             adv_img = np.transpose(adv_img, [2, 0, 1])
             return torch.from_numpy(adv_img.copy()), label, adv_name.split('/')[-2]
-
-
+        
         orig_img = imread(os.path.join(self.orig_path, orig_name))
         if orig_img.shape[2] == 4:
             orig_img = orig_img[:, :, :3]
 
-
-        adv_img, orig_img = augment([adv_img, orig_img], self.config,
-                                    self.phase == 'train')
-
-        adv_img, orig_img = normalize([adv_img, orig_img],
-                                      self.config['net_type'])
+        adv_img, orig_img = augment([adv_img, orig_img], self.config, self.phase == 'train')
+        adv_img, orig_img = normalize([adv_img, orig_img], self.config['net_type'])
 
         adv_img = np.transpose(adv_img, [2, 0, 1])
         orig_img = np.transpose(orig_img, [2, 0, 1])
-        return torch.from_numpy(orig_img.copy()), torch.from_numpy(
-                adv_img.copy()), label
+        return torch.from_numpy(orig_img.copy()), torch.from_numpy(adv_img.copy()), label
 
     def __len__(self):
         return len(self.adv_names)

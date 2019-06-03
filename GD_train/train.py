@@ -273,7 +273,7 @@ class TagAccuracy(object):
         return self.sum.keys()
 
 def test(net, data_loader, result_file_name, defense = True):
-    start_time = time.time()
+    # start_time = time.time()
     net.eval()
 
     # # defense
