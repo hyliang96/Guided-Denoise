@@ -89,6 +89,14 @@ You need to download ImageNet before preprocessing dataset , and
 mkdir Originset Originset_test # used to save images that prepare_data.ipynb will use
 ```
 
+Open `prepare_data.ipynb`, and 
+
+* find  `Path_to_ImageNet_train`, and change it to `'<path to imagenet_train>'`
+
+* find `Path_to_ImageNet_val_data` and change it to `'<path to imagenet_val>'`
+
+
+
 Run `prepare_data.ipynb` with jupyter notebook, to convert ImageNet into `Ogirinset`, `Originset_test`
 
 ### Run Attackers
