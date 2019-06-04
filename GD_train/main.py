@@ -143,6 +143,7 @@ def main():
                 test_attack += f.readlines()
         test_attack = [attack.split(' ')[0].split(',')[0].split('\n')[0] for attack in test_attack]
         test_data = np.load(os.path.join(modelpath,'test_split.npy'))
+        # test_data = test_data[:1000]
         dataset = DefenseDataset(config,  'test', test_data, test_attack)
         test_loader = DataLoader(
             dataset,

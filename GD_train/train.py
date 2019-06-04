@@ -251,6 +251,7 @@ class TagAccuracy(object):
     def __init__(self):
         self.sum = {}
         self.n = {}
+        self._mean = {}
 
     def add(self, tags, pred, label):
         # pred []
@@ -264,10 +265,11 @@ class TagAccuracy(object):
             else:
                 self.sum[tag] = correct.item()
                 self.n[tag] = 1
+
+            self._mean[tag] = self.sum[tag]/self.n[tag] 
         
     def mean(self):
-        return {tag:self.sum[tag]/self.n[tag] 
-            for tag in self.sum.keys()}
+        return self._mean
 
     def keys(self):
         return self.sum.keys()
@@ -324,7 +326,17 @@ def test(net, data_loader, result_file_name, defense = True):
             if not attack in acc_pbars.keys():
                 acc_pbars[attack] = tqdm(total=data_loader.num_orig_data, leave=True, position=1+len(attack_list))
                 attack_list.append(attack)
-            acc_str = 'defense acc: %.3f / no_defense acc: %.3f' % (acc.mean()[attack], acc_nodf.mean()[attack])
+            if defense:
+                acc_attck = acc.mean()[attack]
+                acc_nodf_attck = acc_nodf.mean()[attack]
+                if acc_nodf_attck != 0:
+                    acc_rate = (acc_attck-acc_nodf_attck)/acc_nodf_attck
+                else:
+                    acc_rate = float('nan')
+                acc_str = 'defense acc: %.3f / no_defense acc: %.3f, higher %6.3f' % (acc_attck, acc_nodf_attck, acc_rate)
+            else:
+                acc_nodf_attck = acc_nodf.mean()[attack]
+                acc_str = 'no_defense acc: %.3f, higher %.3f' % acc_nodf_attck
             acc_pbars[attack].set_description_str(attack+': ')
             acc_pbars[attack].set_postfix_str(acc_str)
             acc_pbars[attack].update()
@@ -348,18 +360,37 @@ def test(net, data_loader, result_file_name, defense = True):
         print()
     print()    
 
-
-    print('Test | number of correctly classidied samples under different attack')
     if defense:
-        print('defense:    ', end='')
-        print(acc.mean())
-    print('no defense: ', end='')
-    print(acc_nodf.mean())
+        acc_rates = {}
+        for attack in acc.keys():
+            acc_attck = acc.mean()[attack]
+            acc_nodf_attck = acc_nodf.mean()[attack]
+            acc_rate = (acc_attck-acc_nodf_attck)/acc_nodf_attck
+            acc_rates[attack] = acc_rate
 
-    log_content={}
-    log_content['no defense'] = acc_nodf.mean()
+    # print('Test | acc under different transferred attack')
+    # if defense:
+    #     print('defense:    ', end='')
+    #     print(acc.mean())
+    # print('no defense: ', end='')
+    # print(acc_nodf.mean())
+    # if defense:
+    #     print('higher:     ', end='')
+    #     print(acc_rates)
+
     if defense:
-        log_content['defense'] = acc.mean()
+        log_content={}
+        for attack in acc.keys():
+            log_content[attack]={'defense:': acc.mean()[attack], 
+                                'no_defense:': acc_nodf.mean()[attack],
+                                'rate': acc_rates[attack]
+                                }
+    else:
+        log_content = acc_nodf.mean()
+
+    print('transferred attack method: test accuracy')
+    for key,value in log_content.items():
+        print(key,':',value)
 
     with open(result_file_name+'.json', 'w') as f:
         json.dump(log_content, f, ensure_ascii=False)

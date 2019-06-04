@@ -1,5 +1,4 @@
 fgsm_v3_random,
 Iter4_v3_resv2_inresv2_random,
 fgsm_v4_random,
-Iter4_v4_eps4,
 Iter4_v4_eps16
