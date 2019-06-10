@@ -60,7 +60,7 @@ def train(epoch, net, data_loader, optimizer, get_lr, loss_idcs = [4], requires_
         control_loss = []
 
     n_batch = len(data_loader)
-    pbar = tqdm(total=n_batch, leave=False, position=0)     
+    pbar = tqdm(total=n_batch, leave=False, position=0)
     for i, (orig, adv, label) in enumerate(data_loader):
         prefix='epoch %03d train' % epoch
         suffix="Batch %4d / %4d"%(i+1, n_batch)
@@ -135,7 +135,7 @@ def val(epoch, net, data_loader, requires_control = True):
         control_loss = []
 
     n_batch = len(data_loader)
-    pbar = tqdm(total=n_batch, leave=False, position=0)     
+    pbar = tqdm(total=n_batch, leave=False, position=0)
 
     for i, (orig, adv, label) in enumerate(data_loader):
         prefix='epoch %03d val  ' % epoch
@@ -171,7 +171,7 @@ def val(epoch, net, data_loader, requires_control = True):
                 loss_values.append(ll.mean().item())
             control_loss.append(loss_values)
 
-    pbar.close()    
+    pbar.close()
 
     orig_acc = np.mean(orig_acc)
     acc = np.mean(acc)
@@ -212,8 +212,8 @@ class TagAccuracy(object):
                 self.sum[tag] = correct.item()
                 self.n[tag] = 1
 
-            self._mean[tag] = self.sum[tag]/self.n[tag] 
-        
+            self._mean[tag] = self.sum[tag]/self.n[tag]
+
     def mean(self):
         return self._mean
 
@@ -231,8 +231,8 @@ def test(net, data_loader, result_file_name, defense = True):
     attack_list = []
 
     n_batch = len(data_loader)
-    pbar = tqdm(total=n_batch, leave=True, position=0) 
-    
+    pbar = tqdm(total=n_batch, leave=True, position=0)
+
     for i, (adv, label, attacks) in enumerate(data_loader):
         # adv = Variable(adv.cuda(async = True), volatile = True)
         adv = Variable(adv.cuda(async = True))
@@ -246,7 +246,7 @@ def test(net, data_loader, result_file_name, defense = True):
         prefix="Test on adv | Batch %4d/%4d"%(i+1, n_batch)
         acc_output = 'defense/no_defense: ' if defense else 'no_defnese: '
         acc_output += ' '.join(
-                [ '%s:%.3f/%.3f' % (attack, acc.mean()[attack], acc_nodf.mean()[attack]) 
+                [ '%s:%.3f/%.3f' % (attack, acc.mean()[attack], acc_nodf.mean()[attack])
                     for attack in acc.keys()]
             )
 
@@ -260,40 +260,40 @@ def test(net, data_loader, result_file_name, defense = True):
             if defense:
                 acc_attck = acc.mean()[attack]
                 acc_nodf_attck = acc_nodf.mean()[attack]
-                if acc_nodf_attck != 0:
-                    acc_rate = (acc_attck-acc_nodf_attck)/acc_nodf_attck
+                if acc_nodf_attck != 1:
+                    acc_rate = (acc_attck-acc_nodf_attck)/(1-acc_nodf_attck)
                 else:
                     acc_rate = float('nan')
-                acc_str = 'defense acc: %.3f / no_defense acc: %.3f, higher %6.3f' % (acc_attck, acc_nodf_attck, acc_rate)
+                acc_str = 'defense acc: %.3f / no_defense acc: %.3f, err rate: %6.3f' % (acc_attck, acc_nodf_attck, acc_rate)
             else:
                 acc_nodf_attck = acc_nodf.mean()[attack]
-                acc_str = 'no_defense acc: %.3f, higher %.3f' % acc_nodf_attck
+                acc_str = 'no_defense acc: %.3f, err rate: %.3f' % acc_nodf_attck
             acc_pbars[attack].set_description_str(attack+': ')
             acc_pbars[attack].set_postfix_str(acc_str)
             acc_pbars[attack].update()
-            
+
     pbar.close()
     for attack in attack_list:
         acc_pbars[attack].close()
 
     for i in range(len(attack_list)+1):
         print()
-    print()    
+    print()
 
     if defense:
         acc_rates = {}
         for attack in acc.keys():
             acc_attck = acc.mean()[attack]
             acc_nodf_attck = acc_nodf.mean()[attack]
-            acc_rate = (acc_attck-acc_nodf_attck)/acc_nodf_attck
+            acc_rate = (acc_attck-acc_nodf_attck)/(1-acc_nodf_attck)
             acc_rates[attack] = acc_rate
 
     if defense:
         log_content={}
         for attack in acc.keys():
-            log_content[attack]={'defense:': acc.mean()[attack], 
+            log_content[attack]={'defense:': acc.mean()[attack],
                                 'no_defense:': acc_nodf.mean()[attack],
-                                'rate': acc_rates[attack]
+                                'err_rate': acc_rates[attack]
                                 }
     else:
         log_content = acc_nodf.mean()
